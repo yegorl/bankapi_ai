@@ -80,9 +80,10 @@ public class JwtTokenService : IAuthenticationService
             var user = await _userRepository.GetByEmailAsync(email, cancellationToken);
             
             // Log failed attempt if user not found
+            // NOTE: Using generic internal reason to prevent username enumeration
             if (user is null)
             {
-                var failedSession = LoginSession.CreateFailed(email, ipAddress, userAgentSnapshot, "User not found");
+                var failedSession = LoginSession.CreateFailed(email, ipAddress, userAgentSnapshot, "Authentication failed");
                 await _loginSessionRepository.AddAsync(failedSession, cancellationToken);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
                 return new AuthenticationResult(false, null, null, "Invalid credentials", null);
@@ -91,7 +92,7 @@ public class JwtTokenService : IAuthenticationService
             // Verify password
             if (!_passwords.ContainsKey(email) || _passwords[email] != HashPassword(password))
             {
-                var failedSession = LoginSession.CreateFailed(email, ipAddress, userAgentSnapshot, "Invalid password");
+                var failedSession = LoginSession.CreateFailed(email, ipAddress, userAgentSnapshot, "Authentication failed");
                 await _loginSessionRepository.AddAsync(failedSession, cancellationToken);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
                 return new AuthenticationResult(false, null, null, "Invalid credentials", null);

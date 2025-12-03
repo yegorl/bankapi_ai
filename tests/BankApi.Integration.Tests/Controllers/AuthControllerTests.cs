@@ -157,7 +157,7 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory<Pro
         var refreshRequest = new RefreshTokenRequest(refreshToken!);
         
         // Add authorization header
-        _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("******", accessToken);
+        _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
         // Act
         var response = await _client.PostAsJsonAsync("/api/auth/revoke", refreshRequest);
