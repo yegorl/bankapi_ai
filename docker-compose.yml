@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  bankapi:
+    image: bankapi:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bankapi
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Data Source=/data/bankapi.db
+      - JwtSettings__Secret=ThisIsAVeryLongSecretKeyForJWTTokenGeneration123456
+      - JwtSettings__Issuer=BankingAPI
+      - JwtSettings__Audience=BankingAPIUsers
+      - JwtSettings__ExpirationMinutes=60
+    volumes:
+      - bankapi-data:/data
+      - ./logs:/app/logs
+    networks:
+      - bankapi-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  bankapi-data:
+    driver: local
+
+networks:
+  bankapi-network:
+    driver: bridge

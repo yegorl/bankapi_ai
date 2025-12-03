@@ -1,0 +1,17 @@
+**/.dockerignore
+**/.env
+**/.git
+**/.gitignore
+**/.vs
+**/.vscode
+**/bin
+**/obj
+**/.DS_Store
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/logs
+**/node_modules
+**/*.db
+**/*.db-shm
+**/*.db-wal
+README.md
