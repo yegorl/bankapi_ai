@@ -3,6 +3,8 @@ using BankApi.Domain.Aggregates.Accounts;
 using BankApi.Domain.Aggregates.Cards;
 using BankApi.Domain.Aggregates.Transactions;
 using BankApi.Domain.Aggregates.Users;
+using BankApi.Domain.Aggregates.LoginSessions;
+using BankApi.Domain.Aggregates.RefreshTokens;
 using Microsoft.EntityFrameworkCore;
 
 namespace BankApi.Infrastructure.Persistence;
@@ -21,6 +23,8 @@ public class BankDbContext : DbContext
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<Card> Cards => Set<Card>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
+    public DbSet<LoginSession> LoginSessions => Set<LoginSession>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

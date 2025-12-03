@@ -58,7 +58,7 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Login and get JWT token
+    /// Login and get JWT token with refresh token
     /// </summary>
     [HttpPost("login")]
     [AllowAnonymous]
@@ -67,26 +67,67 @@ public class AuthController : ControllerBase
         try
         {
             var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-            var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+            var userAgentSnapshot = HttpContext.Request.Headers.UserAgent.ToString();
 
-            var user = await _userRepository.GetByEmailAsync(request.Email);
-            if (user is null)
-                return Unauthorized(new { error = "Invalid credentials" });
-
-            // Verify password
-            if (!VerifyPassword(request.Password, user.PasswordHash))
-                return Unauthorized(new { error = "Invalid credentials" });
-
-            var result = await _authService.LoginAsync(request.Email, request.Password, ipAddress, userAgent);
+            var result = await _authService.LoginAsync(request.Email, request.Password, ipAddress, userAgentSnapshot);
             
             if (!result.Success)
                 return Unauthorized(new { error = result.Error });
 
             return Ok(new AuthenticationResponse(
                 result.Token!,
+                result.RefreshToken!,
                 result.UserId!,
                 request.Email,
                 DateTime.UtcNow.AddMinutes(60)));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Refresh access token using refresh token
+    /// </summary>
+    [HttpPost("refresh")]
+    [AllowAnonymous]
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+    {
+        try
+        {
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            var userAgentSnapshot = HttpContext.Request.Headers.UserAgent.ToString();
+
+            var result = await _authService.RefreshTokenAsync(request.RefreshToken, ipAddress, userAgentSnapshot);
+            
+            if (!result.Success)
+                return Unauthorized(new { error = result.Error });
+
+            return Ok(new 
+            { 
+                token = result.Token,
+                refreshToken = result.RefreshToken,
+                userId = result.UserId
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Revoke a refresh token
+    /// </summary>
+    [HttpPost("revoke")]
+    [Authorize]
+    public async Task<IActionResult> RevokeToken([FromBody] RefreshTokenRequest request)
+    {
+        try
+        {
+            await _authService.RevokeRefreshTokenAsync(request.RefreshToken);
+            return Ok(new { message = "Token revoked successfully" });
         }
         catch (Exception ex)
         {
