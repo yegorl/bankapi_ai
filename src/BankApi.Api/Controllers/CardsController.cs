@@ -1,4 +1,6 @@
+using BankApi.Application.Commands.Cards;
 using BankApi.Application.DTOs;
+using BankApi.Application.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,8 +27,9 @@ public class CardsController : ControllerBase
     {
         try
         {
-            // Note: This would need RequestCardCommand to be created
-            return Ok(new { message = "Card request functionality to be implemented" });
+            var command = new RequestCardCommand(request);
+            var result = await _mediator.Send(command);
+            return Created($"/api/cards/{result.Id}", result);
         }
         catch (Exception ex)
         {
@@ -43,8 +46,13 @@ public class CardsController : ControllerBase
     {
         try
         {
-            // Note: This would need GetCardByIdQuery to be created
-            return Ok(new { message = "Get card functionality to be implemented" });
+            var query = new GetCardByIdQuery(id);
+            var result = await _mediator.Send(query);
+            
+            if (result == null)
+                return NotFound(new { error = $"Card with ID {id} not found" });
+            
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -60,8 +68,9 @@ public class CardsController : ControllerBase
     {
         try
         {
-            // Note: This would need BlockCardCommand to be created
-            return Ok(new { message = "Block card functionality to be implemented" });
+            var command = new BlockCardCommand(id);
+            await _mediator.Send(command);
+            return Ok(new { message = "Card blocked successfully" });
         }
         catch (Exception ex)
         {
@@ -77,8 +86,9 @@ public class CardsController : ControllerBase
     {
         try
         {
-            // Note: This would need TemporarilyBlockCardCommand to be created
-            return Ok(new { message = "Temporarily block card functionality to be implemented" });
+            var command = new TemporarilyBlockCardCommand(id);
+            await _mediator.Send(command);
+            return Ok(new { message = "Card temporarily blocked successfully" });
         }
         catch (Exception ex)
         {
@@ -94,8 +104,9 @@ public class CardsController : ControllerBase
     {
         try
         {
-            // Note: This would need UnblockCardCommand to be created
-            return Ok(new { message = "Unblock card functionality to be implemented" });
+            var command = new UnblockCardCommand(id);
+            await _mediator.Send(command);
+            return Ok(new { message = "Card unblocked successfully" });
         }
         catch (Exception ex)
         {
@@ -112,8 +123,9 @@ public class CardsController : ControllerBase
     {
         try
         {
-            // Note: This would need ValidateCVVCommand to be created
-            return Ok(new { valid = false, message = "CVV validation to be implemented" });
+            var command = new ValidateCVVCommand(request);
+            var isValid = await _mediator.Send(command);
+            return Ok(new { valid = isValid });
         }
         catch (Exception ex)
         {

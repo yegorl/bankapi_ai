@@ -1,5 +1,6 @@
 using BankApi.Application.Commands.Transactions;
 using BankApi.Application.DTOs;
+using BankApi.Application.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,23 +20,6 @@ public class TransactionsController : ControllerBase
     }
 
     /// <summary>
-    /// Create a transaction
-    /// </summary>
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateTransactionRequest request)
-    {
-        try
-        {
-            // Note: This would need CreateTransactionCommand to be created
-            return Ok(new { message = "Create transaction functionality to be implemented" });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-    }
-
-    /// <summary>
     /// Execute a transfer between accounts
     /// </summary>
     [HttpPost("transfer")]
@@ -45,7 +29,7 @@ public class TransactionsController : ControllerBase
         {
             var command = new ExecuteTransferCommand(request);
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return Created($"/api/transactions/{result.Id}", result);
         }
         catch (Exception ex)
         {
@@ -61,8 +45,13 @@ public class TransactionsController : ControllerBase
     {
         try
         {
-            // Note: This would need GetTransactionByIdQuery to be created
-            return Ok(new { message = "Get transaction functionality to be implemented" });
+            var query = new GetTransactionByIdQuery(id);
+            var result = await _mediator.Send(query);
+            
+            if (result == null)
+                return NotFound(new { error = $"Transaction with ID {id} not found" });
+            
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -78,8 +67,9 @@ public class TransactionsController : ControllerBase
     {
         try
         {
-            // Note: This would need GetAccountStatementQuery to be created
-            return Ok(new { message = "Get statement functionality to be implemented" });
+            var query = new GetAccountStatementQuery(accountId, from, to);
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
         catch (Exception ex)
         {
