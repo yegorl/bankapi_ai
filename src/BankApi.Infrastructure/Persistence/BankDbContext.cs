@@ -5,6 +5,7 @@ using BankApi.Domain.Aggregates.Transactions;
 using BankApi.Domain.Aggregates.Users;
 using BankApi.Domain.Aggregates.LoginSessions;
 using BankApi.Domain.Aggregates.RefreshTokens;
+using BankApi.Domain.Aggregates.MoneyTransfers;
 using Microsoft.EntityFrameworkCore;
 
 namespace BankApi.Infrastructure.Persistence;
@@ -25,6 +26,7 @@ public class BankDbContext : DbContext
     public DbSet<Transaction> Transactions => Set<Transaction>();
     public DbSet<LoginSession> LoginSessions => Set<LoginSession>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<MoneyTransfer> MoneyTransfers => Set<MoneyTransfer>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

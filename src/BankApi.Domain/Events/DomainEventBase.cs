@@ -67,3 +67,17 @@ public record UserCreatedEvent(Guid UserId, string Email, string Role, DateTime 
 {
     public DateTime OccurredOn { get; init; } = OccurredOn;
 }
+
+// MoneyTransfer Events
+public record MoneyTransferCreatedEvent(Guid MoneyTransferId, string SourceCardNumber, string TargetCardNumber, decimal Amount, string Currency, DateTime OccurredOn) : DomainEventBase
+{
+    public DateTime OccurredOn { get; init; } = OccurredOn;
+}
+public record MoneyTransferCompletedEvent(Guid MoneyTransferId, string SourceCardNumber, string TargetCardNumber, decimal Amount, string Currency, DateTime OccurredOn) : DomainEventBase
+{
+    public DateTime OccurredOn { get; init; } = OccurredOn;
+}
+public record MoneyTransferFailedEvent(Guid MoneyTransferId, string SourceCardNumber, string TargetCardNumber, string Reason, DateTime OccurredOn) : DomainEventBase
+{
+    public DateTime OccurredOn { get; init; } = OccurredOn;
+}
