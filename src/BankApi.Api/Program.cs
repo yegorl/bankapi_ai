@@ -75,9 +75,10 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Ensure database is created
-using (var scope = app.Services.CreateScope())
+// Ensure database is created (skip in test environment)
+if (app.Environment.EnvironmentName != "Testing")
 {
+    using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<BankDbContext>();
     await dbContext.Database.EnsureCreatedAsync();
 }
