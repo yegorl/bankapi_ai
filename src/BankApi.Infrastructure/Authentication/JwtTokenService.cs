@@ -16,7 +16,7 @@ namespace BankApi.Infrastructure.Authentication;
 public class JwtTokenService : IAuthenticationService
 {
     private readonly JwtSettings _jwtSettings;
-    private readonly IAccountHolderRepository _accountHolderRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
     
     // NOTE: In-memory storage for demonstration purposes only
@@ -27,11 +27,11 @@ public class JwtTokenService : IAuthenticationService
 
     public JwtTokenService(
         IOptions<JwtSettings> jwtSettings,
-        IAccountHolderRepository accountHolderRepository,
+        IUserRepository userRepository,
         IUnitOfWork unitOfWork)
     {
         _jwtSettings = jwtSettings.Value;
-        _accountHolderRepository = accountHolderRepository;
+        _userRepository = userRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -45,28 +45,17 @@ public class JwtTokenService : IAuthenticationService
     {
         try
         {
-            var existingHolder = await _accountHolderRepository.GetByEmailAsync(email, cancellationToken);
-            if (existingHolder is not null)
+            var existingUser = await _userRepository.GetByEmailAsync(email, cancellationToken);
+            if (existingUser is not null)
                 return new AuthenticationResult(false, null, "Email already registered", null);
 
             var emailValue = EmailAddress.Create(email);
-            var phoneValue = PhoneNumber.Create(phone);
-
-            var accountHolder = Domain.Aggregates.AccountHolders.AccountHolder.Create(
-                firstName,
-                lastName,
-                emailValue,
-                phoneValue,
-                DateTime.UtcNow.AddYears(-25), // Default age
-                null);
-
-            await _accountHolderRepository.AddAsync(accountHolder, cancellationToken);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
+            
             // Store password hash (use BCrypt in production)
-            _passwords[email] = HashPassword(password);
+            var passwordHash = HashPassword(password);
+            _passwords[email] = passwordHash;
 
-            return new AuthenticationResult(true, null, null, accountHolder.Id);
+            return new AuthenticationResult(true, null, null, "user-created");
         }
         catch (Exception ex)
         {
@@ -83,8 +72,8 @@ public class JwtTokenService : IAuthenticationService
     {
         try
         {
-            var accountHolder = await _accountHolderRepository.GetByEmailAsync(email, cancellationToken);
-            if (accountHolder is null)
+            var user = await _userRepository.GetByEmailAsync(email, cancellationToken);
+            if (user is null)
                 return new AuthenticationResult(false, null, "Invalid credentials", null);
 
             if (!_passwords.ContainsKey(email) || _passwords[email] != HashPassword(password))
@@ -95,9 +84,10 @@ public class JwtTokenService : IAuthenticationService
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, accountHolder.Id),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
                 new Claim("ip_hash", ipHash),
                 new Claim("ua_hash", uaHash)
             };
@@ -118,7 +108,7 @@ public class JwtTokenService : IAuthenticationService
             // Store binding
             _tokenBindings[tokenString] = (ipHash, uaHash);
 
-            return new AuthenticationResult(true, tokenString, null, accountHolder.Id);
+            return new AuthenticationResult(true, tokenString, null, user.Id.ToString());
         }
         catch (Exception ex)
         {

@@ -15,6 +15,11 @@ public class AccountHolderConfiguration : IEntityTypeConfiguration<AccountHolder
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
 
+        builder.Property(x => x.UserId)
+            .IsRequired();
+
+        builder.HasIndex(x => x.UserId);
+
         builder.Property(x => x.FirstName)
             .IsRequired()
             .HasMaxLength(100);

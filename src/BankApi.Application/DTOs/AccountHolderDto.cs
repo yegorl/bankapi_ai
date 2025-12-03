@@ -2,6 +2,7 @@ namespace BankApi.Application.DTOs;
 
 public record AccountHolderDto(
     string Id,
+    Guid UserId,
     string FirstName,
     string LastName,
     string Email,
@@ -19,6 +20,7 @@ public record AddressDto(
     string Country);
 
 public record CreateAccountHolderRequest(
+    Guid UserId,
     string FirstName,
     string LastName,
     string Email,

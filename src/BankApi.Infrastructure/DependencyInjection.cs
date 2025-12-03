@@ -28,6 +28,7 @@ public static class DependencyInjection
                 b => b.MigrationsAssembly(typeof(BankDbContext).Assembly.FullName)));
 
         // Repositories
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAccountHolderRepository, AccountHolderRepository>();
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<ICardRepository, CardRepository>();

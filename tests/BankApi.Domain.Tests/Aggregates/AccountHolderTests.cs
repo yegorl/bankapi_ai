@@ -16,7 +16,8 @@ public class AccountHolderTests
         var dateOfBirth = DateTime.UtcNow.AddYears(-30);
 
         // Act
-        var holder = AccountHolder.Create("John", "Doe", email, phone, dateOfBirth);
+        var userId = Guid.NewGuid();
+        var holder = AccountHolder.Create(userId, "John", "Doe", email, phone, dateOfBirth);
 
         // Assert
         holder.Should().NotBeNull();
@@ -38,7 +39,8 @@ public class AccountHolderTests
         var dateOfBirth = DateTime.UtcNow.AddYears(-30);
 
         // Act & Assert
-        var act = () => AccountHolder.Create("", "Doe", email, phone, dateOfBirth);
+        var userId = Guid.NewGuid();
+        var act = () => AccountHolder.Create(userId, "", "Doe", email, phone, dateOfBirth);
         act.Should().Throw<ValidationException>()
             .WithMessage("*first name*");
     }
@@ -52,7 +54,8 @@ public class AccountHolderTests
         var dateOfBirth = DateTime.UtcNow.AddYears(-17);
 
         // Act & Assert
-        var act = () => AccountHolder.Create("John", "Doe", email, phone, dateOfBirth);
+        var userId = Guid.NewGuid();
+        var act = () => AccountHolder.Create(userId, "John", "Doe", email, phone, dateOfBirth);
         act.Should().Throw<ValidationException>()
             .WithMessage("*18 years old*");
     }
@@ -63,7 +66,8 @@ public class AccountHolderTests
         // Arrange
         var email = EmailAddress.Create("test@example.com");
         var phone = PhoneNumber.Create("+1234567890");
-        var holder = AccountHolder.Create("John", "Doe", email, phone, DateTime.UtcNow.AddYears(-30));
+        var userId = Guid.NewGuid();
+        var holder = AccountHolder.Create(userId, "John", "Doe", email, phone, DateTime.UtcNow.AddYears(-30));
         
         var newEmail = EmailAddress.Create("newemail@example.com");
         var newPhone = PhoneNumber.Create("+9876543210");
@@ -82,7 +86,8 @@ public class AccountHolderTests
         // Arrange
         var email = EmailAddress.Create("test@example.com");
         var phone = PhoneNumber.Create("+1234567890");
-        var holder = AccountHolder.Create("John", "Doe", email, phone, DateTime.UtcNow.AddYears(-30));
+        var userId = Guid.NewGuid();
+        var holder = AccountHolder.Create(userId, "John", "Doe", email, phone, DateTime.UtcNow.AddYears(-30));
 
         // Act
         holder.MarkAsDeleted();

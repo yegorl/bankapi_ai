@@ -13,6 +13,7 @@ public class AccountHolder : AggregateRoot<string>
     private static int _lastId = 0;
     private static readonly object _lockObject = new();
 
+    public Guid UserId { get; private set; }
     public string FirstName { get; private set; } = string.Empty;
     public string LastName { get; private set; } = string.Empty;
     public EmailAddress Email { get; private set; } = null!;
@@ -23,9 +24,10 @@ public class AccountHolder : AggregateRoot<string>
     // Required by EF Core
     private AccountHolder() { }
 
-    private AccountHolder(string id, string firstName, string lastName, EmailAddress email, PhoneNumber phone, DateTime dateOfBirth, Address? address)
+    private AccountHolder(string id, Guid userId, string firstName, string lastName, EmailAddress email, PhoneNumber phone, DateTime dateOfBirth, Address? address)
     {
         Id = id;
+        UserId = userId;
         FirstName = firstName;
         LastName = lastName;
         Email = email;
@@ -37,7 +39,7 @@ public class AccountHolder : AggregateRoot<string>
     /// <summary>
     /// Creates a new AccountHolder
     /// </summary>
-    public static AccountHolder Create(string firstName, string lastName, EmailAddress email, PhoneNumber phone, DateTime dateOfBirth, Address? address = null)
+    public static AccountHolder Create(Guid userId, string firstName, string lastName, EmailAddress email, PhoneNumber phone, DateTime dateOfBirth, Address? address = null)
     {
         if (string.IsNullOrWhiteSpace(firstName))
             throw new ValidationException("First name cannot be empty");
@@ -53,7 +55,7 @@ public class AccountHolder : AggregateRoot<string>
             throw new ValidationException("Account holder must be at least 18 years old");
 
         var id = GenerateAccountHolderId();
-        var accountHolder = new AccountHolder(id, firstName, lastName, email, phone, dateOfBirth, address);
+        var accountHolder = new AccountHolder(id, userId, firstName, lastName, email, phone, dateOfBirth, address);
 
         accountHolder.AddDomainEvent(new AccountHolderCreatedEvent(
             id,

@@ -61,3 +61,9 @@ public record TransactionFailedEvent(Guid TransactionId, Guid? SourceAccountId, 
 {
     public DateTime OccurredOn { get; init; } = OccurredOn;
 }
+
+// User Events
+public record UserCreatedEvent(Guid UserId, string Email, string Role, DateTime OccurredOn) : DomainEventBase
+{
+    public DateTime OccurredOn { get; init; } = OccurredOn;
+}

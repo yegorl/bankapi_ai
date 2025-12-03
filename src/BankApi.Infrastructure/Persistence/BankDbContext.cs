@@ -2,6 +2,7 @@ using BankApi.Domain.Aggregates.AccountHolders;
 using BankApi.Domain.Aggregates.Accounts;
 using BankApi.Domain.Aggregates.Cards;
 using BankApi.Domain.Aggregates.Transactions;
+using BankApi.Domain.Aggregates.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace BankApi.Infrastructure.Persistence;
@@ -15,6 +16,7 @@ public class BankDbContext : DbContext
     {
     }
 
+    public DbSet<User> Users => Set<User>();
     public DbSet<AccountHolder> AccountHolders => Set<AccountHolder>();
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<Card> Cards => Set<Card>();

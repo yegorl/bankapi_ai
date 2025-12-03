@@ -35,6 +35,7 @@ public class CreateAccountHolderCommandHandler : IRequestHandler<CreateAccountHo
         }
 
         var accountHolder = AccountHolder.Create(
+            request.Request.UserId,
             request.Request.FirstName,
             request.Request.LastName,
             email,

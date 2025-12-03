@@ -1,6 +1,207 @@
-@BankApi.Api_HostAddress = http://localhost:5169
+@BankApi.Api_HostAddress = http://localhost:5000
+@token = 
 
-GET {{BankApi.Api_HostAddress}}/weatherforecast/
+### Health Check
+GET {{BankApi.Api_HostAddress}}/health
 Accept: application/json
+
+###
+
+### Health Ready Check
+GET {{BankApi.Api_HostAddress}}/health/ready
+Accept: application/json
+
+###
+
+### Sign Up - Create Admin User
+POST {{BankApi.Api_HostAddress}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "email": "admin@bankapi.com",
+  "password": "Admin123!",
+  "firstName": "Admin",
+  "lastName": "User",
+  "phone": "+15551234567",
+  "dateOfBirth": "1990-01-01T00:00:00Z"
+}
+
+###
+
+### Sign Up - Create Regular User
+POST {{BankApi.Api_HostAddress}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "email": "user@bankapi.com",
+  "password": "User123!",
+  "firstName": "Regular",
+  "lastName": "User",
+  "phone": "+15559876543",
+  "dateOfBirth": "1995-05-15T00:00:00Z"
+}
+
+###
+
+### Login - Get JWT Token
+# @name login
+POST {{BankApi.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@bankapi.com",
+  "password": "Admin123!"
+}
+
+###
+
+### Create Account Holder (Admin only)
+# First, manually set @token from login response above
+POST {{BankApi.Api_HostAddress}}/api/accountholders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "userId": "00000000-0000-0000-0000-000000000001",
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "phone": "+15551112222",
+  "dateOfBirth": "1985-03-20T00:00:00Z",
+  "address": {
+    "street": "123 Main St",
+    "city": "New York",
+    "state": "NY",
+    "postalCode": "10001",
+    "country": "USA"
+  }
+}
+
+###
+
+### Get Account Holder by ID
+GET {{BankApi.Api_HostAddress}}/api/accountholders/AH-00001
+Accept: application/json
+
+###
+
+### Update Account Holder (Admin only)
+PUT {{BankApi.Api_HostAddress}}/api/accountholders/AH-00001
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "email": "john.updated@example.com",
+  "phone": "+15553334444",
+  "address": {
+    "street": "456 Oak Ave",
+    "city": "Boston",
+    "state": "MA",
+    "postalCode": "02101",
+    "country": "USA"
+  }
+}
+
+###
+
+### Create Account (Admin only)
+# @name createAccount
+POST {{BankApi.Api_HostAddress}}/api/accounts
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "accountHolderId": "AH-00001",
+  "currency": "USD",
+  "description": "Primary Checking Account"
+}
+
+###
+
+### Get Account by ID
+# Use the ID from createAccount response
+GET {{BankApi.Api_HostAddress}}/api/accounts/00000000-0000-0000-0000-000000000001
+Accept: application/json
+
+###
+
+### Get Accounts by Holder ID
+GET {{BankApi.Api_HostAddress}}/api/accounts/holder/AH-00001
+Accept: application/json
+
+###
+
+### Request Card (Admin only)
+POST {{BankApi.Api_HostAddress}}/api/cards
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "accountId": "00000000-0000-0000-0000-000000000001",
+  "cardHolderName": "JOHN DOE",
+  "cvv": "123",
+  "cardType": "Debit"
+}
+
+###
+
+### Block Card (Admin only)
+PUT {{BankApi.Api_HostAddress}}/api/cards/00000000-0000-0000-0000-000000000001/block
+Authorization: Bearer {{token}}
+
+###
+
+### Temporarily Block Card (Admin only)
+PUT {{BankApi.Api_HostAddress}}/api/cards/00000000-0000-0000-0000-000000000001/block-temporary
+Authorization: Bearer {{token}}
+
+###
+
+### Unblock Card (Admin only)
+PUT {{BankApi.Api_HostAddress}}/api/cards/00000000-0000-0000-0000-000000000001/unblock
+Authorization: Bearer {{token}}
+
+###
+
+### Validate CVV
+POST {{BankApi.Api_HostAddress}}/api/cards/validate-cvv
+Content-Type: application/json
+
+{
+  "cardId": "00000000-0000-0000-0000-000000000001",
+  "cvv": "123"
+}
+
+###
+
+### Execute Transfer
+POST {{BankApi.Api_HostAddress}}/api/transactions/transfer
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "sourceAccountId": "00000000-0000-0000-0000-000000000001",
+  "targetAccountId": "00000000-0000-0000-0000-000000000002",
+  "amount": 100.50,
+  "description": "Payment for services"
+}
+
+###
+
+### Get Transaction by ID
+GET {{BankApi.Api_HostAddress}}/api/transactions/00000000-0000-0000-0000-000000000001
+Authorization: Bearer {{token}}
+
+###
+
+### Get Account Statement
+GET {{BankApi.Api_HostAddress}}/api/transactions/statement?accountId=00000000-0000-0000-0000-000000000001&from=2024-01-01&to=2024-12-31
+Authorization: Bearer {{token}}
+
+###
+
+### Delete Account Holder (Admin only)
+DELETE {{BankApi.Api_HostAddress}}/api/accountholders/AH-00001
+Authorization: Bearer {{token}}
 
 ###
