@@ -2,11 +2,7 @@ namespace BankApi.Application.DTOs;
 
 public record SignUpRequest(
     string Email,
-    string Password,
-    string FirstName,
-    string LastName,
-    string Phone,
-    DateTime DateOfBirth);
+    string Password);
 
 public record LoginRequest(
     string Email,

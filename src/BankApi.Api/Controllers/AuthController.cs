@@ -94,6 +94,9 @@ public class AuthController : ControllerBase
         }
     }
 
+    // NOTE: SHA256 is used for demonstration purposes only
+    // PRODUCTION: Use BCrypt, scrypt, or Argon2 for password hashing
+    // These algorithms are designed to be computationally expensive and resistant to brute force
     private static string HashPassword(string password)
     {
         using var sha256 = SHA256.Create();

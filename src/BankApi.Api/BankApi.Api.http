@@ -13,32 +13,26 @@ Accept: application/json
 
 ###
 
-### Sign Up - Create Admin User
-POST {{BankApi.Api_HostAddress}}/api/auth/signup
-Content-Type: application/json
-
-{
-  "email": "admin@bankapi.com",
-  "password": "Admin123!",
-  "firstName": "Admin",
-  "lastName": "User",
-  "phone": "+15551234567",
-  "dateOfBirth": "1990-01-01T00:00:00Z"
-}
-
-###
-
-### Sign Up - Create Regular User
+### Sign Up - Create User (Default role is User)
+# Note: Users are created with User role by default
+# Admin users must be created directly in the database or through a separate admin endpoint
 POST {{BankApi.Api_HostAddress}}/api/auth/signup
 Content-Type: application/json
 
 {
   "email": "user@bankapi.com",
-  "password": "User123!",
-  "firstName": "Regular",
-  "lastName": "User",
-  "phone": "+15559876543",
-  "dateOfBirth": "1995-05-15T00:00:00Z"
+  "password": "User123!"
+}
+
+###
+
+### Sign Up - Create Another User
+POST {{BankApi.Api_HostAddress}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "email": "admin@bankapi.com",
+  "password": "Admin123!"
 }
 
 ###
