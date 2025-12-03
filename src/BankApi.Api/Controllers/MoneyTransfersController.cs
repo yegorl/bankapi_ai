@@ -20,16 +20,23 @@ public class MoneyTransfersController : ControllerBase
     }
 
     /// <summary>
-    /// Execute a money transfer between cards
+    /// Execute a money transfer from your card to another card
     /// </summary>
+    /// <param name="sourceCardNumber">The card number to transfer from (query parameter)</param>
+    /// <param name="request">The transfer request containing amount and target card number</param>
     [HttpPost("card-transfer")]
-    public async Task<IActionResult> ExecuteCardTransfer([FromBody] ExecuteCardTransferRequest request)
+    public async Task<IActionResult> ExecuteCardTransfer(
+        [FromQuery] string sourceCardNumber,
+        [FromBody] ExecuteCardTransferRequest request)
     {
         try
         {
-            var command = new ExecuteCardTransferCommand(request);
+            if (string.IsNullOrWhiteSpace(sourceCardNumber))
+                return BadRequest(new { error = "Source card number is required" });
+
+            var command = new ExecuteCardTransferCommand(request, sourceCardNumber);
             var result = await _mediator.Send(command);
-            return Created($"/api/moneytransfers/{result.Id}", result);
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -38,7 +45,7 @@ public class MoneyTransfersController : ControllerBase
     }
 
     /// <summary>
-    /// Get money transfer by ID
+    /// Get money transfer by ID (returns full details including status)
     /// </summary>
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)

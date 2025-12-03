@@ -13,8 +13,10 @@ public record MoneyTransferDto(
     string? FailureReason,
     DateTime CreatedAt);
 
+public record MoneyTransferResponse(
+    Guid Id,
+    string Status);
+
 public record ExecuteCardTransferRequest(
-    string SourceCardNumber,
-    string TargetCardNumber,
     decimal Amount,
-    string? Description);
+    string CardNumber);
