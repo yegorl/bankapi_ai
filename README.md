@@ -1,6 +1,6 @@
 # Banking API - DDD/CQRS Implementation
 
-A comprehensive REST banking API built with ASP.NET Core 9, implementing Domain-Driven Design (DDD) and CQRS patterns.
+A comprehensive REST banking API built with ASP.NET Core 10, implementing Domain-Driven Design (DDD) and CQRS patterns.
 
 ## 🏗️ Architecture
 
@@ -58,7 +58,7 @@ A comprehensive REST banking API built with ASP.NET Core 9, implementing Domain-
 
 ## 🛠️ Tech Stack
 
-- **Framework**: ASP.NET Core 9.0
+- **Framework**: ASP.NET Core 10.0
 - **Language**: C# 14
 - **Database**: SQLite with Entity Framework Core 9
 - **Architecture**: DDD + CQRS
@@ -112,7 +112,7 @@ bankapi_ai/
 
 ### Prerequisites
 
-- .NET 9.0 SDK
+- .NET 10.0 SDK
 - Docker (optional, for containerized deployment)
 
 ### Running Locally

@@ -37,7 +37,7 @@ Content-Type: application/json
 
 ###
 
-### Login - Get JWT Token
+### Login - Get JWT Token and Refresh Token
 # @name login
 POST {{BankApi.Api_HostAddress}}/api/auth/login
 Content-Type: application/json
@@ -45,6 +45,28 @@ Content-Type: application/json
 {
   "email": "admin@bankapi.com",
   "password": "Admin123!"
+}
+
+###
+
+### Refresh Access Token
+# Use the refresh token from login response
+POST {{BankApi.Api_HostAddress}}/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "your-refresh-token-here"
+}
+
+###
+
+### Revoke Refresh Token (Authenticated)
+POST {{BankApi.Api_HostAddress}}/api/auth/revoke
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "refreshToken": "your-refresh-token-here"
 }
 
 ###
@@ -190,6 +212,25 @@ Authorization: Bearer {{token}}
 
 ### Get Account Statement
 GET {{BankApi.Api_HostAddress}}/api/transactions/statement?accountId=00000000-0000-0000-0000-000000000001&from=2024-01-01&to=2024-12-31
+Authorization: Bearer {{token}}
+
+###
+
+### Execute Card-to-Card Money Transfer
+# Transfer money from one card to another by card number
+POST {{BankApi.Api_HostAddress}}/api/moneytransfers/card-transfer?sourceCardNumber=1234567890123456
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "amount": 100.50,
+  "cardNumber": "6543210987654321"
+}
+
+###
+
+### Get Money Transfer by ID
+GET {{BankApi.Api_HostAddress}}/api/moneytransfers/00000000-0000-0000-0000-000000000001
 Authorization: Bearer {{token}}
 
 ###
