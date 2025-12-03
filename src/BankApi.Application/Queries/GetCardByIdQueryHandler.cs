@@ -1,3 +1,4 @@
+using BankApi.Application.Common;
 using BankApi.Application.DTOs;
 using BankApi.Domain.Repositories;
 using MediatR;
@@ -21,7 +22,7 @@ public class GetCardByIdQueryHandler : IRequestHandler<GetCardByIdQuery, CardDto
 
         return new CardDto(
             card.Id,
-            MaskCardNumber(card.CardNumber.Value),
+            CardNumberFormatter.MaskCardNumber(card.CardNumber.Value),
             card.AccountId,
             card.CardHolderName,
             card.ExpirationDate,
@@ -29,13 +30,5 @@ public class GetCardByIdQueryHandler : IRequestHandler<GetCardByIdQuery, CardDto
             card.IsTemporarilyBlocked,
             card.CardType.ToString(),
             card.CreatedAt);
-    }
-
-    private static string MaskCardNumber(string cardNumber)
-    {
-        if (cardNumber.Length < 4)
-            return cardNumber;
-
-        return $"****-****-****-{cardNumber[^4..]}";
     }
 }

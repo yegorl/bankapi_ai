@@ -1,3 +1,4 @@
+using BankApi.Application.Common;
 using BankApi.Application.DTOs;
 using BankApi.Domain.Aggregates.Cards;
 using BankApi.Domain.Repositories;
@@ -44,7 +45,7 @@ public class RequestCardCommandHandler : IRequestHandler<RequestCardCommand, Car
 
         return new CardDto(
             card.Id,
-            MaskCardNumber(card.CardNumber.Value),
+            CardNumberFormatter.MaskCardNumber(card.CardNumber.Value),
             card.AccountId,
             card.CardHolderName,
             card.ExpirationDate,
@@ -52,13 +53,5 @@ public class RequestCardCommandHandler : IRequestHandler<RequestCardCommand, Car
             card.IsTemporarilyBlocked,
             card.CardType.ToString(),
             card.CreatedAt);
-    }
-
-    private static string MaskCardNumber(string cardNumber)
-    {
-        if (cardNumber.Length < 4)
-            return cardNumber;
-
-        return $"****-****-****-{cardNumber[^4..]}";
     }
 }
