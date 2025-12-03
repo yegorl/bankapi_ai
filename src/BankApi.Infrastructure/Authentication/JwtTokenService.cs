@@ -18,7 +18,11 @@ public class JwtTokenService : IAuthenticationService
     private readonly JwtSettings _jwtSettings;
     private readonly IAccountHolderRepository _accountHolderRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private static readonly Dictionary<string, string> _passwords = new(); // In-memory password storage (use proper DB in production)
+    
+    // NOTE: In-memory storage for demonstration purposes only
+    // PRODUCTION: Replace with proper database tables or distributed cache (Redis)
+    // Security concern: Data lost on restart, not suitable for horizontal scaling
+    private static readonly Dictionary<string, string> _passwords = new();
     private static readonly Dictionary<string, (string IpHash, string UaHash)> _tokenBindings = new();
 
     public JwtTokenService(
